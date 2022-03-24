@@ -12,7 +12,7 @@
 
 ### Tecnologia
 
-* AWS RDBS SQL Server Express Edition
+* AWS RDS SQL Server Express Edition
   * Instância db.td3.small, 50GB de storage
   * US-East North Virginia
 
