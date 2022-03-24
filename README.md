@@ -6,21 +6,21 @@
 * Spring Boot
 
 # Banco de dados
-###Modelagem
+### Modelagem
 
 ![](target/docs/BD_Modelagem.jpg)
 
-###Tecnologia
+### Tecnologia
 
 * AWS RDBS SQL Server Express Edition
   * Instância db.td3.small, 50GB de storage
   * US-East North Virginia
 
-###Tabelas
+### Tabelas
 
 * Pela falta de compatibilidade do SQL Server com Apple Silicon, foi utilizado Azure Data Studio para os scripts
 
-####Pessoas
+#### Pessoas
 
 Já foi adicionada uma entrada. Como o servidor está em nuvem, não é necessário scripts adicionais.
 
@@ -108,9 +108,9 @@ conectar ao banco de dados. Essa instrução foi incluída no Dockerfile.
 
 Se não possui o Docker insalado localmente, [instale conforme documentação](https://docs.docker.com/desktop/)
 
-###Passo a passo
+### Passo a passo
 
-####Crie a imagem do projeto
+#### Crie a imagem do projeto
 
 * Abra o terminal e navegue até a pasta raíz do projeto (mesmo nível que contenha o Dockerfile)
 
@@ -125,7 +125,7 @@ Se não possui o Docker insalado localmente, [instale conforme documentação](h
 
 ![](target/docs/imagem.png)
 
-####Subir o container
+#### Subir o container
 
 * Rode o comando
   * `docker container run -dt -p 8080:8080 --name dock-banking-container dock-banking`
@@ -166,7 +166,7 @@ Foi gerado Javadoc
 
 [Acesse aqui](target/dock-banking-1.0-javadoc/index-all.html) ou em `target/dock-banking-1.0-javadoc/index-all.html`
 
-###Após concluir avaliação
+### Após concluir avaliação
 
 * Destrua o container 
   * `docker container kill dock-banking-container`
