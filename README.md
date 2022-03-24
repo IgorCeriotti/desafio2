@@ -49,7 +49,7 @@ VALUES
 GO
 ```
 
-####Conta
+#### Conta
 
 ```
 IF OBJECT_ID('[dbo].[Conta]', 'U') IS NOT NULL
@@ -75,7 +75,7 @@ REFERENCES Pessoas(id)
 GO
 ```
 
-####Transacao
+#### Transacao
 
 ```
 IF OBJECT_ID('[dbo].[Transacao]', 'U') IS NOT NULL
