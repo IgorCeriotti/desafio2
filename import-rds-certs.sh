@@ -1,10 +1,7 @@
 #!/usr/bin/env sh
-#i tried it and working like charm just have to note make the file .sh chmod +x and you may need sudo to run with permission but be carefull with sudo
-#be sure the $JAVA_HOME is configure correctly or make it static as commentedline 7 below
 OLDDIR="$PWD"
 
 if [ -z "$CACERTS_FILE" ]; then
-# you should have java home configure to point for example /usr/lib/jvm/default-java/jre/lib/security/cacerts
     CACERTS_FILE=/usr/java/openjdk-17/lib/security/cacerts
 fi
 

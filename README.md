@@ -1,4 +1,4 @@
-#Desenvolvimento
+# Desenvolvimento
 
 * O desenvolvimento foi realizado em um MacBook Pro (M1, macOS Monterey)
 * JDK 17
@@ -105,6 +105,10 @@ Utilize **`Docker`** para evitar conflitos de ambiente.
 
 **Ponto de atenção**: é necessário que o arquivo _cacerts_ no JDK security contenha os certificados da AWS para ser possível
 conectar ao banco de dados. Essa instrução foi incluída no Dockerfile.
+
+
+O script _import-rds-certs.sh_ realiza essa operação localmente, mas é necessário alterar a variável
+CACERTS_FILE para a localização local.
 
 Se não possui o Docker insalado localmente, [instale conforme documentação](https://docs.docker.com/desktop/)
 
