@@ -1,0 +1,930 @@
+{
+	"info": {
+		"_postman_id": "11f76cc4-89d4-4453-9796-eeb6ef32e944",
+		"name": "Dock-Banking",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "{{base_url}}/health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"health"
+							]
+						},
+						"description": "Verifica saúde da aplicação"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cria Conta",
+			"item": [
+				{
+					"name": "Cria Conta",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json()",
+									"",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console});",
+									"",
+									"const CONTA_SCHEMA = ajv.compile(JSON.parse(pm.environment.get(\"conta_schema\")));",
+									"",
+									"pm.environment.set(\"saldo_conta\", response.saldo)",
+									"pm.environment.set(\"limite_diario\", response.limiteSaqueDiario)",
+									"pm.environment.set(\"flag_ativo\", response.flagAtivo)",
+									"",
+									"pm.test(\"Checa status 201\", () => {",
+									"    pm.response.to.have.status(201)",
+									"})",
+									"",
+									"pm.test(\"Checa contrato\", () => {",
+									"    pm.expect(ajv.validate(response, CONTA_SCHEMA)).to.be.true;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"saldo\": 5000,\n    \"limiteSaqueDiario\": 100,\n    \"flagAtivo\": true,\n    \"tipoConta\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/banking/conta/new/{{id_pessoa}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"banking",
+								"conta",
+								"new",
+								"{{id_pessoa}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "INVALID idPessoa",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console});",
+									"",
+									"const CONTA_FALHA_SCHEMA = ajv.compile(JSON.parse(pm.environment.get(\"conta_schema_falha\")));",
+									"",
+									"pm.test(\"Checa status 500\", () => {",
+									"    pm.response.to.have.status(500)",
+									"})",
+									"",
+									"pm.test(\"Checa contrato\", () => {",
+									"    pm.expect(ajv.validate(response, CONTA_FALHA_SCHEMA)).to.be.true;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"saldo\": 5000,\n    \"limiteSaqueDiario\": 100,\n    \"flagAtivo\": true,\n    \"tipoConta\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/banking/conta/new/340",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"banking",
+								"conta",
+								"new",
+								"340"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pessoas",
+			"item": [
+				{
+					"name": "Retorna lista de pessoas no BD",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"response = pm.response.json()",
+									"",
+									"pm.test(\"Checa status 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test(\"Checa que há uma pessoa já adicionada\", () => {",
+									"    pm.response.to.not.be.empty",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/banking/pessoas/all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"banking",
+								"pessoas",
+								"all"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Realizar Depósito",
+			"item": [
+				{
+					"name": "Realiza Depósito",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json()",
+									"",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console});",
+									"",
+									"const TRANSACAO_SCHEMA = ajv.compile(JSON.parse(pm.environment.get(\"transacao_schema\")));",
+									"",
+									"pm.test(\"Checa status 200\", () => {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Checa mensagem de sucesso\", () => {",
+									"    pm.expect(response.retorno).to.eqls(\"Deposito realizado com sucesso!\")",
+									"})",
+									"",
+									"pm.test(\"Valida contrato\", () => {",
+									"    pm.expect(ajv.validate(response, TRANSACAO_SCHEMA)).to.be.true;",
+									"})",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"valor\": 1.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/banking/conta/2/deposito",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"banking",
+								"conta",
+								"2",
+								"deposito"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "id da Conta Inválida",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json()",
+									"",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console});",
+									"",
+									"const ERROR_SCHEMA = ajv.compile(JSON.parse(pm.environment.get(\"error_schema\")));",
+									"",
+									"pm.test(\"Checa status 404\", () => {",
+									"    pm.response.to.have.status(404)",
+									"})",
+									"",
+									"pm.test(\"Checa mensagem de erro\", () => {",
+									"    pm.expect(response.mensagem).to.eqls(\"Nao foi encontrada conta com id = 200\")",
+									"})",
+									"",
+									"pm.test(\"Valida contrato\", () => {",
+									"    pm.expect(ajv.validate(response, ERROR_SCHEMA)).to.be.true;",
+									"})",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"valor\": 1.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/banking/conta/200/deposito",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"banking",
+								"conta",
+								"200",
+								"deposito"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Saldo",
+			"item": [
+				{
+					"name": "Verifica saldo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Checa status 200\", () => {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/banking/conta/2/saldo",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"banking",
+								"conta",
+								"2",
+								"saldo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "IdConta inválida Verifica saldo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json()",
+									"",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console});",
+									"",
+									"const ERROR_SCHEMA = ajv.compile(JSON.parse(pm.environment.get(\"error_schema\")));",
+									"",
+									"pm.test(\"Checa status 404\", () => {",
+									"    pm.response.to.have.status(404)",
+									"})",
+									"",
+									"pm.test(\"Checa mensagem de falha\", () => {",
+									"    pm.expect(response.mensagem).to.eqls(\"Nao foi encontrada conta com id = 222\")",
+									"})",
+									"",
+									"pm.test(\"Valida contrato\", () => {",
+									"    pm.expect(ajv.validate(response, ERROR_SCHEMA)).to.be.true;",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/banking/conta/222/saldo",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"banking",
+								"conta",
+								"222",
+								"saldo"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Extrato",
+			"item": [
+				{
+					"name": "Checa Extrato",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json()",
+									"",
+									"pm.test(\"Checa status 200\", () => {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/banking/conta/5/extrato",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"banking",
+								"conta",
+								"5",
+								"extrato"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "IdConta inválida Verifica saldo Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json()",
+									"",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console});",
+									"",
+									"const ERROR_SCHEMA = ajv.compile(JSON.parse(pm.environment.get(\"error_schema\")));",
+									"",
+									"pm.test(\"Checa status 404\", () => {",
+									"    pm.response.to.have.status(404)",
+									"})",
+									"",
+									"pm.test(\"Checa mensagem de falha\", () => {",
+									"    pm.expect(response.mensagem).to.eqls(\"Nao foi encontrada conta com id = 222\")",
+									"})",
+									"",
+									"pm.test(\"Valida contrato\", () => {",
+									"    pm.expect(ajv.validate(response, ERROR_SCHEMA)).to.be.true;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/banking/conta/222/extrato",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"banking",
+								"conta",
+								"222",
+								"extrato"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Bloqueio de conta",
+			"item": [
+				{
+					"name": "Bloqueio de Conta",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json()",
+									"",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console});",
+									"",
+									"const BLOQUEIO_SCHEMA = ajv.compile(JSON.parse(pm.environment.get(\"bloqueio_conta_schema\")));",
+									"",
+									"pm.test(\"Checa status 200\", () => {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Checa que flag foi alterado para false\", () => {",
+									"    pm.expect(response.flagAtivo).to.be.false",
+									"})",
+									"",
+									"pm.test(\"Valida contrato\", () => {",
+									"    pm.expect(ajv.validate(response, BLOQUEIO_SCHEMA)).to.be.true;",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json-patch+json",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/banking/conta/9/bloquear",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"banking",
+								"conta",
+								"9",
+								"bloquear"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Id Conta inválido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json()",
+									"",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console});",
+									"",
+									"const ERROR_SCHEMA = ajv.compile(JSON.parse(pm.environment.get(\"error_schema\")));",
+									"",
+									"pm.test(\"Checa status 404\", () => {",
+									"    pm.response.to.have.status(404)",
+									"})",
+									"",
+									"pm.test(\"Checa mensagem de falha\", () => {",
+									"    pm.expect(response.mensagem).to.eqls(\"Nao foi encontrada conta com id = 900\")",
+									"})",
+									"",
+									"pm.test(\"Valida contrato\", () => {",
+									"    pm.expect(ajv.validate(response, ERROR_SCHEMA)).to.be.true;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json-patch+json",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/banking/conta/900/bloquear",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"banking",
+								"conta",
+								"900",
+								"bloquear"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Extrato de Transações por Período",
+			"item": [
+				{
+					"name": "Extrato por Período",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"response = pm.response.json()",
+									"",
+									"pm.test(\"Checa status 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test(\"Checa que há uma pessoa já adicionada\", () => {",
+									"    pm.response.to.not.be.empty",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/banking/conta/2/extrato/20-03-2022/22-03-2022",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"banking",
+								"conta",
+								"2",
+								"extrato",
+								"20-03-2022",
+								"22-03-2022"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Id Conta Inválido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json()",
+									"",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console});",
+									"",
+									"const ERROR_SCHEMA = ajv.compile(JSON.parse(pm.environment.get(\"error_schema\")));",
+									"",
+									"pm.test(\"Checa status 404\", () => {",
+									"    pm.response.to.have.status(404)",
+									"})",
+									"",
+									"pm.test(\"Checa mensagem de falha\", () => {",
+									"    pm.expect(response.mensagem).to.eqls(\"Nao foi encontrada conta com id = 200\")",
+									"})",
+									"",
+									"pm.test(\"Valida contrato\", () => {",
+									"    pm.expect(ajv.validate(response, ERROR_SCHEMA)).to.be.true;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/banking/conta/200/extrato/20-03-2022/22-03-2022",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"banking",
+								"conta",
+								"200",
+								"extrato",
+								"20-03-2022",
+								"22-03-2022"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "data invalida",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json()",
+									"",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console});",
+									"",
+									"const ERROR_SCHEMA = ajv.compile(JSON.parse(pm.environment.get(\"error_schema\")));",
+									"",
+									"pm.test(\"Checa status 422\", () => {",
+									"    pm.response.to.have.status(422)",
+									"})",
+									"",
+									"pm.test(\"Checa mensagem de falha\", () => {",
+									"    pm.expect(response.mensagem).to.eqls(\"Parâmetros para a pesquisa incorretos!\")",
+									"})",
+									"",
+									"pm.test(\"Valida contrato\", () => {",
+									"    pm.expect(ajv.validate(response, ERROR_SCHEMA)).to.be.true;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/banking/conta/2/extrato/20-03-2022/22234-2022",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"banking",
+								"conta",
+								"2",
+								"extrato",
+								"20-03-2022",
+								"22234-2022"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Realizar saque",
+			"item": [
+				{
+					"name": "Saque",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json()",
+									"",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console});",
+									"",
+									"const TRANSACAO_SCHEMA = ajv.compile(JSON.parse(pm.environment.get(\"transacao_schema\")));",
+									"",
+									"pm.test(\"Checa status 200\", () => {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Checa mensagem de sucesso\", () => {",
+									"    pm.expect(response.retorno).to.eqls(\"Saque realizado com sucesso! Consulte seu saldo.\")",
+									"})",
+									"",
+									"pm.test(\"Valida contrato\", () => {",
+									"    pm.expect(ajv.validate(response, TRANSACAO_SCHEMA)).to.be.true;",
+									"})",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"valor\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/banking/conta/5/saque",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"banking",
+								"conta",
+								"5",
+								"saque"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Valor > Limite",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json()",
+									"",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console});",
+									"",
+									"const ERROR_SCHEMA = ajv.compile(JSON.parse(pm.environment.get(\"error_schema\")));",
+									"",
+									"pm.test(\"Checa status 412\", () => {",
+									"    pm.response.to.have.status(412)",
+									"})",
+									"",
+									"pm.test(\"Checa mensagem de falha\", () => {",
+									"    pm.expect(response.mensagem).to.eqls(\"Valor do saque ultrapassa o limite máximo diário! Não é possível realizar a operação.\")",
+									"})",
+									"",
+									"pm.test(\"Valida contrato\", () => {",
+									"    pm.expect(ajv.validate(response, ERROR_SCHEMA)).to.be.true;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"valor\": 10000000000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/banking/conta/5/saque",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"banking",
+								"conta",
+								"5",
+								"saque"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Id Conta Inválido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json()",
+									"",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console});",
+									"",
+									"const ERROR_SCHEMA = ajv.compile(JSON.parse(pm.environment.get(\"error_schema\")));",
+									"",
+									"pm.test(\"Checa status 404\", () => {",
+									"    pm.response.to.have.status(404)",
+									"})",
+									"",
+									"pm.test(\"Checa mensagem de falha\", () => {",
+									"    pm.expect(response.mensagem).to.eqls(\"Nao foi encontrada conta com id = 50000\")",
+									"})",
+									"",
+									"pm.test(\"Valida contrato\", () => {",
+									"    pm.expect(ajv.validate(response, ERROR_SCHEMA)).to.be.true;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"valor\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/banking/conta/50000/saque",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"banking",
+								"conta",
+								"50000",
+								"saque"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

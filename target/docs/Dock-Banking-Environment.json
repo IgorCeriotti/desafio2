@@ -1,0 +1,69 @@
+{
+	"id": "a7c41495-94ea-4172-ae5b-fc489b15508f",
+	"name": "Dock-Banking-Environment",
+	"values": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "id_pessoa",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "saldo_conta",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "limite_diario",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "flag_ativo",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "conta_schema",
+			"value": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"saldo\": {\n      \"type\": \"integer\"\n    },\n    \"limiteSaqueDiario\": {\n      \"type\": \"integer\"\n    },\n    \"flagAtivo\": {\n      \"type\": \"boolean\"\n    },\n    \"tipoConta\": {\n      \"type\": \"integer\"\n    },\n    \"dataCriacao\": {\n      \"type\": \"string\"\n    },\n    \"id\": {\n      \"type\": \"integer\"\n    }\n  },\n  \"required\": [\n    \"saldo\",\n    \"limiteSaqueDiario\",\n    \"flagAtivo\",\n    \"tipoConta\",\n    \"dataCriacao\",\n    \"id\"\n  ]\n}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "conta_schema_falha",
+			"value": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"statusCode\": {\n      \"type\": \"integer\"\n    },\n    \"timestamp\": {\n      \"type\": \"string\"\n    },\n    \"mensagem\": {\n      \"type\": \"string\"\n    },\n    \"descricao\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"statusCode\",\n    \"timestamp\",\n    \"mensagem\",\n    \"descricao\"\n  ]\n}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "transacao_schema",
+			"value": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"retorno\": {\n      \"type\": \"string\"\n    },\n    \"transacao\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"idTransacao\": {\n          \"type\": \"integer\"\n        },\n        \"valor\": {\n          \"type\": \"number\"\n        },\n        \"dataTransacao\": {\n          \"type\": \"string\"\n        }\n      },\n      \"required\": [\n        \"idTransacao\",\n        \"valor\",\n        \"dataTransacao\"\n      ]\n    }\n  },\n  \"required\": [\n    \"retorno\",\n    \"transacao\"\n  ]\n}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "error_schema",
+			"value": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"statusCode\": {\n      \"type\": \"integer\"\n    },\n    \"timestamp\": {\n      \"type\": \"string\"\n    },\n    \"mensagem\": {\n      \"type\": \"string\"\n    },\n    \"descricao\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"statusCode\",\n    \"timestamp\",\n    \"mensagem\",\n    \"descricao\"\n  ]\n}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "bloqueio_conta_schema",
+			"value": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"saldo\": {\n      \"type\": \"number\"\n    },\n    \"limiteSaqueDiario\": {\n      \"type\": \"number\"\n    },\n    \"flagAtivo\": {\n      \"type\": \"boolean\"\n    },\n    \"tipoConta\": {\n      \"type\": \"integer\"\n    },\n    \"dataCriacao\": {\n      \"type\": \"string\"\n    },\n    \"id\": {\n      \"type\": \"integer\"\n    }\n  },\n  \"required\": [\n    \"saldo\",\n    \"limiteSaqueDiario\",\n    \"flagAtivo\",\n    \"tipoConta\",\n    \"dataCriacao\",\n    \"id\"\n  ]\n}",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2022-03-24T15:29:30.192Z",
+	"_postman_exported_using": "Postman/9.14.13"
+}
