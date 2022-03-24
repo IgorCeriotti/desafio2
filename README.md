@@ -174,6 +174,6 @@ Foi gerado Javadoc
 
 * Destrua o container 
   * `docker container kill dock-banking-container`
-  * `docker rm dock-banking-container`
+  * `docker container rm dock-banking-container`
 * Remova a imagem
   * `docker image rm dock-banking`
