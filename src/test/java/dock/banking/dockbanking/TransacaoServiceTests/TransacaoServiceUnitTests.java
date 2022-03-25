@@ -34,7 +34,6 @@ public class TransacaoServiceUnitTests {
     Conta contaB;
     Conta contaC;
     Conta contaD;
-    Conta contaE;
     List<Transacao> transacaoList;
 
     @BeforeAll
@@ -58,10 +57,6 @@ public class TransacaoServiceUnitTests {
         contaD = new Conta();
         contaD.setPessoa(new Pessoa());
         contaD.setId(4L);
-
-        contaE = new Conta();
-        contaE.setPessoa(new Pessoa());
-        contaE.setId(5L);
 
         transacaoList = new LinkedList<>() {{
 
