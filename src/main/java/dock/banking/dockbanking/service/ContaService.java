@@ -6,8 +6,6 @@ import dock.banking.dockbanking.exception.ResourceNotFoundException;
 import dock.banking.dockbanking.model.Conta;
 import dock.banking.dockbanking.model.Transacao;
 import dock.banking.dockbanking.repository.ContaRepository;
-import dock.banking.dockbanking.repository.PessoaRepository;
-import dock.banking.dockbanking.repository.TransacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
@@ -36,13 +34,7 @@ public class ContaService {
      * Bean injetado do tipo PessoaRepository
      */
     @Autowired
-    private PessoaRepository _pessoaRepository;
-
-    /**
-     * Bean injetado do tipo TransacaoRepository
-     */
-    @Autowired
-    TransacaoRepository _transacaoRepository;
+    private PessoaService _pessoaService;
 
     /**
      * Bean injetado do tipo TransacaoService
@@ -63,7 +55,7 @@ public class ContaService {
         Salva nova conta
          */
         try {
-            return _pessoaRepository.findById(pessoaId).map(pessoa -> {
+            return _pessoaService.get_pessoaRepository().findById(pessoaId).map(pessoa -> {
                 contaRequest.setPessoa(pessoa);
 
                 _contaRepository.save(contaRequest);
@@ -120,7 +112,7 @@ public class ContaService {
 
             transacao.setConta(conta);
             transacao.setValor(transacao.getValor().negate());
-            _transacaoRepository.save(transacao);
+            _transacaoService.get_transacaoRepository().save(transacao);
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new GeneralException("Falha ao realizar operacoes de saque");
@@ -147,7 +139,7 @@ public class ContaService {
             _contaRepository.save(conta);
 
             transacao.setConta(conta);
-            _transacaoRepository.save(transacao);
+            _transacaoService.get_transacaoRepository().save(transacao);
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new GeneralException("Falha ao realizar operacoes de deposito!");
@@ -200,7 +192,7 @@ public class ContaService {
     public List<Transacao> geraExtrato(Long contaId) {
         Conta conta = obterContaPorId(contaId);
 
-        return _transacaoRepository.findByConta(conta);
+        return _transacaoService.get_transacaoRepository().findByConta(conta);
     }
 
     public ContaRepository get_contaRepository() {
@@ -211,27 +203,19 @@ public class ContaService {
         this._contaRepository = _contaRepository;
     }
 
-    public PessoaRepository get_pessoaRepository() {
-        return _pessoaRepository;
-    }
-
-    public void set_pessoaRepository(PessoaRepository _pessoaRepository) {
-        this._pessoaRepository = _pessoaRepository;
-    }
-
-    public TransacaoRepository get_transacaoRepository() {
-        return _transacaoRepository;
-    }
-
-    public void set_transacaoRepository(TransacaoRepository _transacaoRepository) {
-        this._transacaoRepository = _transacaoRepository;
-    }
-
     public TransacaoService get_transacaoService() {
         return _transacaoService;
     }
 
     public void set_transacaoService(TransacaoService _transacaoService) {
         this._transacaoService = _transacaoService;
+    }
+
+    public PessoaService get_pessoaService() {
+        return _pessoaService;
+    }
+
+    public void set_pessoaService(PessoaService _pessoaService) {
+        this._pessoaService = _pessoaService;
     }
 }

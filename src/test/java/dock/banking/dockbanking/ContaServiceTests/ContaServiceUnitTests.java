@@ -4,6 +4,7 @@ import dock.banking.dockbanking.DockBankingMocks;
 import dock.banking.dockbanking.RepositoryMocksConfiguration.ContaRepositoryConfiguration;
 import dock.banking.dockbanking.RepositoryMocksConfiguration.PessoaRepositoryConfiguration;
 import dock.banking.dockbanking.RepositoryMocksConfiguration.TransacaoRepositoryConfiguration;
+import dock.banking.dockbanking.ServiceMocksConfiguration.PessoaServiceConfiguration;
 import dock.banking.dockbanking.ServiceMocksConfiguration.TransacaoServiceConfiguration;
 import dock.banking.dockbanking.exception.LimiteSaqueDiarioExcedido;
 import dock.banking.dockbanking.model.Conta;
@@ -30,6 +31,9 @@ public class ContaServiceUnitTests {
     private TransacaoServiceConfiguration transacaoServiceConfiguration;
 
     @Autowired
+    private PessoaServiceConfiguration pessoaServiceConfiguration;
+
+    @Autowired
     private PessoaRepositoryConfiguration pessoaRepositoryConfiguration;
 
     @Autowired
@@ -54,9 +58,11 @@ public class ContaServiceUnitTests {
         conta.setLimiteSaqueDiario(BigDecimal.valueOf(100));
 
         contaService = new ContaService();
-        contaService.set_pessoaRepository(pessoaRepositoryConfiguration.pessoaRepositoryMock());
+        contaService.set_pessoaService(pessoaServiceConfiguration.pessoaServiceMock());
+        contaService.set_transacaoService(transacaoServiceConfiguration.transacaoServiceMock());
+        contaService.get_pessoaService().set_pessoaRepository(pessoaRepositoryConfiguration.pessoaRepositoryMock());
         contaService.set_contaRepository(contaRepositoryConfiguration.contaRepositoryMock());
-        contaService.set_transacaoRepository(transacaoRepositoryConfiguration.transacaoRepositoryMock());
+        contaService.get_transacaoService().set_transacaoRepository(transacaoRepositoryConfiguration.transacaoRepositoryMock());
         contaService.set_transacaoService(transacaoServiceConfiguration.transacaoServiceMock());
 
         Mockito.when(pessoaRepositoryConfiguration
@@ -78,6 +84,13 @@ public class ContaServiceUnitTests {
         Mockito.when(transacaoServiceConfiguration.transacaoServiceMock()
                 .retornaTotalSaqueDiario(conta))
                 .thenReturn(BigDecimal.valueOf(30));
+
+        Mockito.when(transacaoServiceConfiguration.transacaoServiceMock()
+                        .get_transacaoRepository())
+                .thenReturn(transacaoRepositoryConfiguration.transacaoRepositoryMock());
+
+        Mockito.when(pessoaServiceConfiguration.pessoaServiceMock().get_pessoaRepository())
+                .thenReturn(pessoaRepositoryConfiguration.pessoaRepositoryMock());
 
     }
 
