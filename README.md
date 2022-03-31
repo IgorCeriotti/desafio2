@@ -15,6 +15,7 @@
 * AWS RDS SQL Server Express Edition
   * Instância db.td3.small, 50GB de storage
   * US-East North Virginia
+* Banco desativado (30.03.2022). Se houver necessidade de testar a aplicação, entrar em contato para reativação.
 
 ### Tabelas
 
